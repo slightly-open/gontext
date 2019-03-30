@@ -1,14 +1,12 @@
 import { Context, ContextAndCancel } from './types'
+import { propagateCancel } from './core'
 import CanceledError from './errors/canceledError'
-import EmptyContext from './contexts/emptyContext'
+import DeadlineExceededError from './errors/deadlineExceeded'
+import { backgroundCtx, todoCtx } from './contexts/emptyContext'
 import CancelContext from './contexts/cancelContext'
 import ValueContext from './contexts/valueContext'
-import { propagateCancel } from './core'
 import TimerContext from './contexts/timerContext'
-import DeadlineExceededError from './errors/deadlineExceeded'
 
-const backgroundCtx = new EmptyContext('background')
-const todoCtx = new EmptyContext('TODO')
 const canceledError = new CanceledError()
 const deadlineExceededError = new DeadlineExceededError()
 

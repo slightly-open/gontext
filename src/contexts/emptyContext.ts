@@ -3,7 +3,6 @@ import CanceledError from '@/errors/canceledError'
 import DeadlineExceededError from '@/errors/deadlineExceeded'
 
 export default class EmptyContext implements Context {
-  constructor(private name: string = 'UNKNOWN') { }
   deadline(): Date | null {
     return null
   }
@@ -17,6 +16,15 @@ export default class EmptyContext implements Context {
     return undefined
   }
   toString(): string {
-    return `context.${this.name}`
+    if (this === backgroundCtx) {
+      return 'context.background'
+    }
+    if (this === todoCtx) {
+      return 'context.TODO'
+    }
+    return 'unknown empty Context'
   }
 }
+
+export const backgroundCtx = new EmptyContext()
+export const todoCtx = new EmptyContext()
