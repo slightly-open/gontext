@@ -77,7 +77,7 @@ export function withDeadline(parent: Context, d: Date): ContextAndCancel {
   }
   const c = new TimerContext(getCancelContext(parent), d)
   propagateCancel(parent, c)
-  const duration = Date.now() - d.getTime()
+  const duration = d.getTime() - Date.now()
   if (duration <= 0) {
     c.cancel(true, deadlineExceededError) // deadline has already passed
     return [c, () => c.cancel(false, canceledError)]
