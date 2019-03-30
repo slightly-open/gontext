@@ -43,6 +43,18 @@ or when the parent context's Done promise is resolved, whichever happens first.
 Canceling this context releases resources associated with it, so code should
 call cancel as soon as the operations running in this Context complete.
 
+### withValue
+```typescript
+import { withValue } from 'gontext'
+const context = withValue(background(), 'key', 'my-value')
+// some logic...
+context.value() // 'my-value'
+```
+withValue returns a copy of parent in which the value associated with key is val.
+
+Use context Values only for request-scoped data that transits processes and
+APIs, not for passing optional parameters to functions.
+
 ## For developers
 
 ### Prerequisites
