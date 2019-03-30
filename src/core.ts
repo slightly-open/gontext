@@ -37,7 +37,7 @@ export function getParentCancelContext(parent: Context): CancelContext | null {
       return p
     }
     if (p instanceof TimerContext) {
-      return p.cancelContext
+      return p._cancelContext
     }
     if (p instanceof ValueContext) {
       p = p.context

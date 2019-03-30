@@ -1,13 +1,17 @@
-import { Context, CancelFunc } from './types'
+import { Context, ContextAndCancel } from './types'
 import CanceledError from './errors/canceledError'
 import EmptyContext from './contexts/emptyContext'
 import CancelContext from './contexts/cancelContext'
 import ValueContext from './contexts/valueContext'
 import { propagateCancel } from './core'
+import TimerContext from './contexts/timerContext'
+import DeadlineExceededError from './errors/deadlineExceeded'
 
 const backgroundCtx = new EmptyContext('background')
 const todoCtx = new EmptyContext('TODO')
 const canceledError = new CanceledError()
+const deadlineExceededError = new DeadlineExceededError()
+
 /**
  * background returns a non-nul, empty Context. It is never canceled, has no
  * values, and has no deadline. It is typically used by the main function,
@@ -37,8 +41,8 @@ export function TODO(): Context {
  * Canceling this context releases resources associated with it, so code should
  * call cancel as soon as the operations running in this Context complete.
  */
-export function withCancel(context: Context): { context: Context, cancel: CancelFunc } {
-  const cancelCtx = new CancelContext(context)
+export function withCancel(context: Context): ContextAndCancel {
+  const cancelCtx = getCancelContext(context)
   propagateCancel(context, cancelCtx)
   return {
     context: cancelCtx,
@@ -52,9 +56,60 @@ export function withCancel(context: Context): { context: Context, cancel: Cancel
  * Use context Values only for request-scoped data that transits processes and
  * APIs, not for passing optional parameters to functions.
  */
-export function withValue(parent: Context, key: any, val: any) {
+export function withValue(parent: Context, key: any, val: any): Context {
   if (key === null || key === undefined) {
     throw new Error('context.withValue : key cannot be null or undefined')
   }
   return new ValueContext(parent, key, val)
+}
+
+/**
+ * withDeadline returns a copy of the parent context with the deadline adjusted
+ * to be no later than d. If the parent's deadline is already earlier than d,
+ * withDeadline(parent, d) is semantically equivalent to parent. The returned
+ * context's Done channel is closed when the deadline expires, when the returned
+ * cancel function is called, or when the parent context's Done channel is
+ * closed, whichever happens first.
+ *
+ * Canceling this context releases resources associated with it, so code should
+ * call cancel as soon as the operations running in this Context complete.
+ */
+export function withDeadline(parent: Context, d: Date): ContextAndCancel {
+  const parentDeadline = parent.deadline()
+  if (parentDeadline !== null && parentDeadline < d) {
+    // The current deadline is already sooner than the new one.
+    return withCancel(parent)
+  }
+  const c = new TimerContext(getCancelContext(parent), d)
+  propagateCancel(parent, c)
+  const duration = Date.now() - d.getTime()
+  if (duration <= 0) {
+    c.cancel(true, deadlineExceededError) // deadline has already passed
+    return {
+      context: c,
+      cancel: () => c.cancel(false, canceledError),
+    }
+  }
+  if (c.err() === null) {
+    c._timeoutId = setTimeout(
+      () => c.cancel(true, deadlineExceededError),
+      duration,
+    )
+  }
+  return {
+    context: c,
+    cancel: () => c.cancel(true, canceledError),
+  }
+}
+
+/**
+ * withTimeout returns withDeadline(parent, new Date(Date.now() + timeoutMs))
+ */
+export function withTimeout(parent: Context, timeoutMs: number): ContextAndCancel {
+  return withDeadline(parent, new Date(Date.now() + timeoutMs))
+}
+
+/** getCancelContext returns an initialized CancelContext. */
+function getCancelContext(parent: Context): CancelContext {
+  return new CancelContext(parent)
 }

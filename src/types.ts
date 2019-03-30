@@ -30,3 +30,8 @@ export interface Context {
  * After the first call, subsequent calls to a CancelFunc do nothing.
  */
 export type CancelFunc = () => void
+
+export interface ContextAndCancel {
+  context: Context
+  cancel: CancelFunc
+}
