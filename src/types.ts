@@ -31,7 +31,4 @@ export interface Context {
  */
 export type CancelFunc = () => void
 
-export interface ContextAndCancel {
-  context: Context
-  cancel: CancelFunc
-}
+export type ContextAndCancel = [Context, CancelFunc]

@@ -42,10 +42,7 @@ export function TODO(): Context {
 export function withCancel(context: Context): ContextAndCancel {
   const cancelCtx = getCancelContext(context)
   propagateCancel(context, cancelCtx)
-  return {
-    context: cancelCtx,
-    cancel: () => cancelCtx.cancel(true, canceledError),
-  }
+  return [cancelCtx, () => cancelCtx.cancel(true, canceledError)]
 }
 
 /**
@@ -83,10 +80,7 @@ export function withDeadline(parent: Context, d: Date): ContextAndCancel {
   const duration = Date.now() - d.getTime()
   if (duration <= 0) {
     c.cancel(true, deadlineExceededError) // deadline has already passed
-    return {
-      context: c,
-      cancel: () => c.cancel(false, canceledError),
-    }
+    return [c, () => c.cancel(false, canceledError)]
   }
   if (c.err() === null) {
     c._timeoutId = setTimeout(
@@ -94,10 +88,7 @@ export function withDeadline(parent: Context, d: Date): ContextAndCancel {
       duration,
     )
   }
-  return {
-    context: c,
-    cancel: () => c.cancel(true, canceledError),
-  }
+  return [c, () => c.cancel(true, canceledError)]
 }
 
 /**
