@@ -12,7 +12,7 @@
     "prebuild": "rimraf lib",
     "build": "tsc",
     "lint": "tslint --fix --project tsconfig.json && tsc --noEmit",
-    "test": "mocha -r ts-node/register tests/**/*.spec.ts",
+    "test": "mocha -r ts-node/register -r tsconfig-paths/register tests/**/*.spec.ts",
     "prepublishOnly": "yarn lint && yarn test && yarn build"
   },
   "devDependencies": {
@@ -22,6 +22,7 @@
     "mocha": "6.0.2",
     "rimraf": "2.6.3",
     "ts-node": "8.0.3",
+    "tsconfig-paths": "3.8.0",
     "tslint": "5.14.0",
     "tslint-config-airbnb": "5.11.1",
     "typescript": "3.3.4000"
