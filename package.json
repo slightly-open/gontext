@@ -1,12 +1,12 @@
 {
   "name": "gontext",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "main": "lib/entry.js",
-  "homepage": "https://github.com/zerobasedjs/gontext",
+  "homepage": "https://github.com/slightly-open/gontext",
   "repository": {
     "type": "git",
-    "url": "github:zerobasedjs/gontext"
+    "url": "github:slightly-open/gontext"
   },
   "scripts": {
     "prebuild": "rimraf lib",
@@ -16,18 +16,18 @@
     "prepublishOnly": "yarn lint && yarn test && yarn build"
   },
   "devDependencies": {
-    "@types/chai": "4.1.7",
-    "@types/mocha": "5.2.6",
+    "@types/chai": "4.2.8",
+    "@types/mocha": "7.0.1",
     "chai": "4.2.0",
-    "mocha": "6.0.2",
-    "rimraf": "2.6.3",
-    "ts-node": "8.0.3",
-    "tsconfig-paths": "3.8.0",
-    "tslint": "5.14.0",
-    "tslint-config-airbnb": "5.11.1",
-    "typescript": "3.3.4000"
+    "mocha": "7.0.1",
+    "rimraf": "3.0.1",
+    "ts-node": "8.6.2",
+    "tsconfig-paths": "3.9.0",
+    "tslint": "6.0.0",
+    "tslint-config-airbnb": "5.11.2",
+    "typescript": "3.7.5"
   },
   "dependencies": {
-    "ts-custom-error": "3.0.0"
+    "ts-custom-error": "3.1.1"
   }
 }
