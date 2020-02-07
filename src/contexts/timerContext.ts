@@ -29,7 +29,7 @@ export default class TimerContext implements Context, Canceler {
     return this._cancelContext.value(key)
   }
   toString() {
-    return `${this._cancelContext.context}.WithDeadline(${this._deadline})`
+    return `${this._cancelContext.context}.withDeadline(${this._deadline})`
   }
   cancel(removeFromParent: boolean, err: CanceledError | DeadlineExceededError | null | undefined): void {
     this._cancelContext.cancel(false, err)

@@ -25,7 +25,7 @@ Context for incoming requests.
 import { TODO } from 'gontext'
 const todoCtx = TODO()
 ```
-TODO returns a non-null, empty Context. Code should use context.TODO when it's unclear which Context to use
+TODO returns a non-null, empty Context. Code should use `context.TODO` when it's unclear which Context to use
 or it is not yet available (because the surrounding function has not yet been extended to accept
 a Context parameter).
 
